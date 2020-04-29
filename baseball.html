@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>baseball</title>
+    <link rel="stylesheet" href="reset.css">
+    <link href="https://fonts.googleapis.com/css?family=Lacquer&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lacquer',sans-serif;
+        }
+        #sheet {
+            text-align: center;
+            margin: 15px auto;
+            padding: 50px;
+            background-image: url("baseball.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 1200px;
+            height: 850px;
+            position: relative;
+        }
+        #sheet p {
+            color: #fff;
+            font-size: 52px;
+            margin-bottom: 30px;
+        }
+        #sheet input {
+            font-size: 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 1.1em;
+            width: 180px;
+            padding-left: 30px;
+        }
+        #sheet button {
+            font-family: 'Lacquer';
+            margin-left: 15px;
+            font-size: 24px;
+            padding: 5px 10px;
+            color: rgb(41, 114, 90);
+            border-radius: 10px;
+            transition: 0.25s;
+            
+        }
+        #sheet button:hover {
+            background-color: #fff;
+
+        }
+        #board {
+            width: 880px;
+            height: 380px;
+            padding: 10px;
+            margin: 30px auto;
+            background-color: rgb(31, 110, 84);
+            border-radius: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+        #log {
+            text-align: left;
+            border: 3px solid #fff;
+            height: 375px;
+            border-radius: 20px;
+        }
+        #log li {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            border: 2px solid #d9d9d9;
+            border-radius: 10px;
+            box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.05);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 500;
+        }
+        #players {
+            position: absolute;
+            top: 380px;
+            left: 50%;
+            transform: translateX(-50%);          
+        }
+        #players img {
+            transform: scale(0.4);
+        }
+        #cover {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            left: 0;
+            top: 0;
+            padding: 200px;
+            box-sizing: border-box;
+            display: none;
+            color: #fff;
+            font-size: 32px;
+        }
+        #cover h1 {
+            padding: 50px;
+        }
+        #cover img {
+            width: 200px;
+        }
+        #cover button {
+            background-color: #fff;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 50px;
+            width: 120px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        #cheer {
+            display: inline-block;
+            padding: 15px 25px;
+            border-radius: 10px;
+            position: absolute;
+            width: 700px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #cheer .chance {
+            font-size: 48px;
+            color: #426DFB;
+            text-shadow: 0 0 3vw #2356FF;
+            animation: flux 4s linear infinite;
+        }
+        @keyframes flux {
+            0%,
+            100% {
+                text-shadow: 0 0 1vw #1041FF, 0 0 3vw #1041FF, 0 0 10vw #1041FF, 0 0 10vw #1041FF, 0 0 .4vw #8BFDFE, .5vw .5vw .1vw #147280;
+                color: #28D7FE;
+            }
+            50% {
+                text-shadow: 0 0 .5vw #082180, 0 0 1.5vw #082180, 0 0 5vw #082180, 0 0 5vw #082180, 0 0 .2vw #082180, .5vw .5vw .1vw #0A3940;
+                color: #146C80;
+            }
+        }  
+    </style>
+</head>
+<body>
+    <div id="sheet">
+        <p>Bulls and Cows</p>
+        <input type="number" maxlength="4" name="" id="inputValue" oninput="maxLengthCheck(this)"><button id=btn>Click</button>
+        <div id="board">
+            <ul id="log"></ul>
+            <div id="cheer">
+                <div class="chance"> Chances only for 10 Times</div>
+            </div>
+        </div>
+    </div>
+    <div id="players">
+        <img src="https://media.giphy.com/media/ckw9kF0VhASObcpM2b/source.gif" alt="">
+    </div>
+    <div id="cover">
+        <h1 id="coverTitle">Congratulation You Hit Homerun</h1>
+        <div id="coverImg"><img src="winner.svg" alt=""></div>
+        <div id="btns"><button id="btnReplay">다시하기</button></div>
+    </div>
+    <script>
+        let inputValue = document.querySelector("#inputValue");
+        let btn = document.querySelector("#btn");
+        let log = document.querySelector("#log")
+        let numbers = [0,1,2,3,4,5,6,7,8,9];
+        let selectedArray = [];
+        let resultArray = [];
+        let strike = 0;
+        let ball = 0;
+        let count = 0;
+        let total = 10;
+        let clearID;
+        let cover = document.querySelector("#cover")
+        let btnReplay = document.querySelector("#btnReplay")
+        let coverImg = document.querySelector("#coverImg img")
+        let coverTitle = document.querySelector("#coverTitle")
+        // let txt = "봉준호 감독 아카데미 상 수상";
+        // console.log(txt.split(" "));
+        let makeQuestion = function(){
+            numbers = [0,1,2,3,4,5,6,7,8,9];
+            selectedArray = [];
+            for(let i=0;i<4;i++){
+                let random = Math.floor(Math.random()*numbers.length);
+                selectedArray.push(numbers[random]);
+                numbers.splice(random,1)
+            };
+            console.log(selectedArray,"===",numbers);
+        }
+        btnReplay.addEventListener("click",function(){
+            cover.style.display="none";
+            makeQuestion();
+            count=0;
+            log.innerHTML="";
+            inputValue.value="";
+            inputValue.focus();
+
+        })
+        function maxLengthCheck(object){
+            if(object.value.length > object.maxLength){
+                object.value = object.value.slice(0, object.maxLength);
+            }
+        }
+        makeQuestion();
+        btn.addEventListener("click",function(){
+            count++;
+            strike=0;
+            ball=0;
+            resultArray = inputValue.value.split("")
+            for(let j=0;j<4;j++){
+                for(let k=0;k<4;k++){
+                    if(selectedArray[j]===Number(resultArray[k])){
+                        if(j===k){
+                            strike++;
+                        } else {
+                            ball++;
+                        }
+                        break;
+                        // break=반복문을 빠져나가는것
+                    }
+                }
+            }
+            if(strike>=4){
+                // alert("홈런")
+                cover.style.display="block"
+                coverImg.setAttribute("src","winner.svg")
+                coverTitle.innerHTML="Congratulation You Hit Homerun"
+            } else {
+                let html = `<li>${resultArray.join("")} : ${strike}s${ball}b</li>`;
+                log.innerHTML=html+log.innerHTML;
+                inputValue.value="";
+                inputValue.focus();
+                
+            }
+            setTimeout(function(){
+                if(count>=total){
+                    cover.style.display="block";
+                    coverImg.setAttribute("src","over.svg");
+                    coverTitle.innerHTML="Cheer Up Try Again";
+                    if(strike>=4){
+                        // alert("홈런")
+                        cover.style.display="block"
+                        coverImg.setAttribute("src","winner.svg")
+                        coverTitle.innerHTML="Congratulation You Hit Homerun"
+                    }
+                }
+            },100);
+        });
+        // console.log(`${strike}s${ball}b`)
+    </script>
+</body>
+</html>
